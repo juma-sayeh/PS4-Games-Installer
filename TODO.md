@@ -1,5 +1,15 @@
 # Work tracker
 
+## Native password keyboard
+
+- [x] Retrieve r46 console evidence of repeated keyboard initialization failures.
+- [x] Identify invalid password/type combination and legacy-SDK option mismatch.
+- [x] Correct native parameters while retaining password masking and no learning.
+- [x] Reproduce both invalid parameter failures and pass the corrected native regression.
+- [x] Run SDL/controller checks and inspect the masked-password screen.
+- [x] Build and validate the r47 package.
+- [ ] Confirm password keyboard and account sign-in on the PS4.
+
 ## Internet Archive authenticated downloads
 
 - [x] Confirm the same file downloads when the user signs into Archive.org.

@@ -154,6 +154,9 @@ build/host/app-test: tests/app_test.cpp $(HOST_COMMON) $(addprefix src/,$(addsuf
 	g++ $(HOSTFLAGS) -Wno-unused-function $$(pkg-config --cflags freetype2) $(filter %.cpp %.o,$^) -o $@
 build/host/controller-test: tests/controller_test.cpp src/controller.cpp src/video.cpp $(HOST_COMMON) build/host/cJSON.o $(HEADERS)
 	g++ $(HOSTFLAGS) -idirafter $(SDK)/include $$(pkg-config --cflags freetype2 sdl2) $(filter %.cpp %.o,$^) $$(pkg-config --libs sdl2) -o $@
+build/host/ime-native-test: tests/ime_native_test.cpp src/video.cpp src/controller.cpp $(HOST_COMMON) build/host/cJSON.o $(HEADERS)
+	g++ $(HOSTFLAGS) -UPSGI_HOST -idirafter $(SDK)/include -ffunction-sections -fdata-sections $(filter %.cpp %.o,$^) -Wl,--gc-sections -o $@
+test: build/host/ime-native-test
 test: assets build/host/archive-auth-test build/host/https-trust-test build/host/json-allocator-test build/host/browser-native-test build/host/metadata-test build/host/catalog-test build/host/catalog-check build/host/model-test build/host/userdata-test build/host/features-test build/host/maintenance-test build/host/browsing-test build/host/filesystem-native-test build/host/thread-native-test build/host/ui-test build/host/artwork-test build/host/render-animation-test build/host/startup-test build/host/lifecycle-test build/host/http-native-test build/host/launch-native-test build/host/uninstall-native-test build/host/storage-native-test build/host/install-native-test build/host/download-runner build/host/app-test build/host/controller-test
 	./build/host/archive-auth-test
 	./build/host/https-trust-test
@@ -178,6 +181,7 @@ test: assets build/host/archive-auth-test build/host/https-trust-test build/host
 	./build/host/install-native-test
 	./build/host/app-test
 	./build/host/controller-test
+	./build/host/ime-native-test
 	python3 tests/http_test.py ./build/host/catalog-check
 	python3 -m unittest discover -s tests -p '*_test.py'
 check: build/host/catalog-check

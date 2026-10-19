@@ -1,5 +1,11 @@
 # Changelog
 
+## r47 — Password keyboard compatibility — 2026-10-19
+
+- Correct the native password keyboard type and remove the dialog option rejected
+  by the SDK version advertised by the OpenOrbis CRT. Retain password masking.
+- Include the native error code when a keyboard cannot open, without recording input.
+
 ## r46 — Internet Archive sign-in — 2026-10-19
 
 - Add a masked Archive.org account sign-in/sign-out screen for downloads that

@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <chrono>
 #include "text.hpp"
+#include <cstdio>
 #include <cstring>
 #include <stdexcept>
 #include <thread>
@@ -216,10 +217,13 @@ void Video::startKeyboard(Ui& ui) {
     params.type = ui.editKind == EditKind::SourceUrl ? ORBIS_TYPE_TYPE_URL : ORBIS_TYPE_DEFAULT;
     if (ui.editKind == EditKind::ArchiveEmail) params.type = ORBIS_TYPE_MAIL;
     if (ui.editKind == EditKind::ArchivePassword) {
+        // Password mode requires Basic Latin (or Number), not Default. The
+        // pinned CRT advertises SDK 1.00, whose dialog rejects Disable Resume.
+        params.type = ORBIS_TYPE_BASIC_LATIN;
         // SceIme option bits are omitted from the pinned OpenOrbis header.
         constexpr uint32_t password = 4, noAutoCapitalization = 2, noLearning = 32,
-                           disableResume = 256, disableAutoSpace = 512;
-        params.option = password | noAutoCapitalization | noLearning | disableResume | disableAutoSpace;
+                           disableAutoSpace = 512;
+        params.option = password | noAutoCapitalization | noLearning | disableAutoSpace;
     }
     params.maxTextLength = maximum;
     // SceIme uses UTF-16; the OpenOrbis wchar_t* declaration has a 32-bit host type.
@@ -229,7 +233,10 @@ void Video::startKeyboard(Ui& ui) {
     int result = sceImeDialogInit(&params, nullptr);
     if (result < 0) {
         std::fill(inputBuffer.begin(), inputBuffer.end(), 0);
-        throw std::runtime_error("The PS4 on-screen keyboard could not be opened");
+        char message[96];
+        std::snprintf(message, sizeof(message), "The PS4 on-screen keyboard could not be opened (0x%08X)",
+                      static_cast<unsigned>(result));
+        throw std::runtime_error(message);
     }
     keyboard = true;
 }

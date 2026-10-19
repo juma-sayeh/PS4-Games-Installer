@@ -1,5 +1,29 @@
 # Implementation progress
 
+## Native password keyboard — 2026-10-19
+
+- The user cannot enter the password on r46. The actual PS4 app.log records
+  repeated keyboard initialization failures; no password or session was retrieved.
+- r46 combines PASSWORD with Default keyboard type, rejected by the documented
+  public dialog validator. It also requests Disable Resume, rejected for compiled
+  SDK versions below 1.50. The built ELF advertises `0x01000051` at process-parameter
+  offset 0x10, matching the SDK field in the pinned OpenOrbis CRT layout. Runtime
+  firmware 9.00 does not change that compiled-SDK validation branch.
+- Select Basic Latin for password entry and remove only the unsupported option.
+  Retain masking/no-learning/no-auto-capitalization/no-auto-space and the existing
+  input-buffer cleanup. The 1024-character password limit is within the documented
+  dialog limit; there is no evidence to change it. Include the native failure code
+  in the existing keyboard error message without logging input text.
+- The native fixture invokes the actual Video keyboard methods with the pinned
+  SDK ABI. Unchanged r46 parameters reproduce `0x80BC0015`; removing only Disable
+  Resume exposes `0x80BC0030` for Default plus PASSWORD. Both corrected parameters
+  pass, including email/URL modes, submission/cancel, buffer clearing and a numeric
+  initialization error. These are fixture results, not console error captures.
+- SDL/controller checks pass; regenerated masked-password screenshots were inspected.
+  Physical-console password entry, account sign-in and full installation remain pending.
+- Built and validated r47 with the pinned OpenOrbis toolchain, package hashes/signatures
+  and import checks. SHA-256: `f6be08f4669aa513321219b447893249f3444f5ab01e6bacac4684f0e422b41b`.
+
 ## Internet Archive authenticated downloads — 2026-10-19
 
 - r45 passes TLS on the user's PS4 9.00 but receives HTTP 401 for a package that

@@ -368,10 +368,22 @@ HTTP, unrelated hosts and nonstandard ports never receive the credentials.
 Catalog/artwork fetches and remote BGFT registration do not receive the session.
 The existing staging/local BGFT path and public catalog format are unchanged.
 
-The account screen masks password entry, disables IME learning/resume for that
+The account screen masks password entry and disables IME learning for that
 field, and clears temporary password buffers after submission/cancel. Sessions
 use a separate mode-0600 file, excluded from existing backup/diagnostic exports.
 Sign-out requires the current worker operation to finish and deletes the local
 session. This is local sign-out, not revocation of all Archive.org sessions.
 There is no authentication bypass, automatic retry on rejected credentials,
 new networking dependency, or claim that host download speed is improved.
+
+The native password dialog uses `ORBIS_TYPE_BASIC_LATIN`. The public dialog
+rejects password mode with the Default type. The pinned OpenOrbis CRT advertises
+compiled SDK `0x01000051` in the generated ELF's process parameters, even on a
+PS4 running firmware 9.00; its legacy dialog option mask rejects Disable Resume.
+Keep password masking, no learning, no auto-capitalization and no auto-space,
+without that unsupported option. This follows the
+[public dialog validation](https://github.com/shadps4-emu/shadPS4/blob/443676d825d3b5c3f7d7fe3c84899b5896892c2d/src/core/libraries/ime/ime_dialog.cpp#L269)
+and the [CRT process-parameter layout](https://github.com/OpenOrbis/musl/blob/eb7e3041b3d1f17eda649f0eb8e04ed547272d5b/arch/ps4/crt_arch.h#L152).
+The native boundary fixture exercises the actual keyboard methods against these
+documented constraints; it is not a physical PS4 test. Initialization failures
+include only the native error code, never keyboard text or credentials.
